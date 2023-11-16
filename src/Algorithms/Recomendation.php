@@ -39,7 +39,8 @@ class Recomendation {
     public function filterByMoreThanOneWord(): self
     {
         $this->items = array_filter($this->items, function ($item) {
-            return str_word_count($item) > 1;
+            $wordCount = str_word_count($item);
+            return $wordCount > 1 && str_contains($item, ' ');
         });
         return $this;
     }
