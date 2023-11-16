@@ -3,34 +3,34 @@
 namespace Askspot\Movies\Algorithms;
 
 class Recomendation {
-    private array $movies = [];
+    private array $items = [];
 
-    public function __construct(array $movies) {
-        $this->movies = $movies;
+    public function __construct(array $items) {
+        $this->items = $items;
     }
 
-    public function getRandomMovies(int $count): self
+    public function getRandomItems(int $count): self
     {
-        if ($count > count($this->movies)) {
-            $count = count($this->movies);
+        if ($count > count($this->items)) {
+            $count = count($this->items);
         }
 
-        $keys = array_rand($this->movies, $count);
-        $this->movies = array_intersect_key($this->movies, array_flip($keys));
+        $keys = array_rand($this->items, $count);
+        $this->items = array_intersect_key($this->items, array_flip($keys));
         return $this;
     }
 
     public function filterByText(string $text): self
     {
-        $this->movies = array_filter($this->movies, function ($movie) use ($text) {
-            return stripos($movie, $text) === 0;
+        $this->items = array_filter($this->items, function ($item) use ($text) {
+            return stripos($item, $text) === 0;
         });
         return $this;
     }
 
     public function filterParityNames(bool $parity): self
     {
-        $this->movies = array_filter($this->movies, function ($movie) use ($parity) {
+        $this->items = array_filter($this->items, function ($movie) use ($parity) {
             return (strlen($movie) % 2 === 0) === $parity;
         });
         return $this;
@@ -38,14 +38,14 @@ class Recomendation {
 
     public function filterByMoreThanOneWord(): self
     {
-        $this->movies = array_filter($this->movies, function ($movie) {
-            return str_word_count($movie) > 1;
+        $this->items = array_filter($this->items, function ($item) {
+            return str_word_count($item) > 1;
         });
         return $this;
     }
 
-    public function getMovies(): array
+    public function getItems(): array
     {
-        return $this->movies;
+        return $this->items;
     }
 }

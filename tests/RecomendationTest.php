@@ -104,8 +104,8 @@ class RecomendationTest extends TestCase {
     {
         $expectedCount = 3;
         $result = $this->moviesRecomendation
-            ->getRandomMovies($expectedCount)
-            ->getMovies();
+            ->getRandomItems($expectedCount)
+            ->getItems();
         $this->assertCount($expectedCount, $result);
     }
 
@@ -115,7 +115,7 @@ class RecomendationTest extends TestCase {
         $startWith = "W";
         $result = $this->moviesRecomendation
             ->filterByText($startWith)
-            ->getMovies();
+            ->getItems();
         foreach ($result as $movie) {
             $this->assertStringStartsWith('W', $movie);
         }
@@ -125,7 +125,7 @@ class RecomendationTest extends TestCase {
     {
         $result = $this->moviesRecomendation
             ->filterParityNames(true)
-            ->getMovies();
+            ->getItems();
         foreach($result as $movie) {
             $this->assertEquals(0, strlen($movie) % 2);
         }
@@ -137,7 +137,7 @@ class RecomendationTest extends TestCase {
         $result = $this->moviesRecomendation
             ->filterByText($startWith)
             ->filterParityNames(true)
-            ->getMovies();
+            ->getItems();
         foreach ($result as $movie) {
             $this->assertStringStartsWith('W', $movie);
             $this->assertEquals(0, strlen($movie) % 2);
@@ -149,7 +149,7 @@ class RecomendationTest extends TestCase {
     {
         $result = $this->moviesRecomendation
             ->filterByMoreThanOneWord()
-            ->getMovies();
+            ->getItems();
         foreach($result as $movie) {
             $this->assertStringContainsString(' ', $movie);
         }
