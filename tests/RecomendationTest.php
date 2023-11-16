@@ -1,11 +1,12 @@
 <?php
 
-namespace Askspot\Movies\Algorithms;
+use PHPUnit\Framework\TestCase;
+use Askspot\Movies\Algorithms\Recomendation;
 
+class RecomendationTest extends TestCase {
+    private Recomendation $moviesRecomendation;
 
-
-class MoviesRecomendation {
-    private array $movies = [
+    private array $testMovies = [
         "Pulp Fiction",
         "Incepcja",
         "Skazani na Shawshank",
@@ -93,63 +94,64 @@ class MoviesRecomendation {
         "Królowa śniegu",
     ];
 
-    public function __construct() {
+    protected function setUp(): void
+    {
+        $this->moviesRecomendation = new Recomendation($this->testMovies);
     }
 
-    private function getRandomMovies(int $count): array
+    // case 1: Zwracane są 3 losowe tytuły.
+    public function testReturnedMoviesEqualCount()
     {
-        return array_rand($this->movies, $count);
+        $expectedCount = 3;
+        $result = $this->moviesRecomendation
+            ->getRandomMovies($expectedCount)
+            ->getMovies();
+        $this->assertCount($expectedCount, $result);
     }
 
-    private function filterByText(string $text): array
+    // case 2: Zwracane są wszystkie filmy na literę 'W' ale tylko jeśli mają parzystą liczbę znaków w tytule.
+    public function testReturnedValuesStartWithCharacter()
     {
-        return array_filter($this->movies, function ($movie) use ($text) {
-            return stripos($movie, $text) === 0;
-        });
-    }
-
-    private function filterParityNames(bool $parity): array
-    {
-        return array_filter($this->movies, function ($movie) use ($parity) {
-            return (strlen($movie) % 2 === 0) === $parity;
-        });
-    }
-
-    private function handle(string $method): array
-    {
-        $response = [];
-
-        if($method === 'firstCase') {
-            $response = $this->getRandomMovies(3);
-        } else if ($method === 'secondCase') {
-            $response = $this->filterByText("W");
-        } else if( $method === 'thirdCase') {
-            $response = [];
-        } else {
-            throw new \BadMethodCallException("The method $method does not exist.");
+        $startWith = "W";
+        $result = $this->moviesRecomendation
+            ->filterByText($startWith)
+            ->getMovies();
+        foreach ($result as $movie) {
+            $this->assertStringStartsWith('W', $movie);
         }
-
-        return $response;
     }
 
-    public function getMovies(string $method = ''): array
+    public function testReturnedValuesAlwaysEven()
     {
-        if (empty($method)) {
-            return $this->movies;
+        $result = $this->moviesRecomendation
+            ->filterParityNames(true)
+            ->getMovies();
+        foreach($result as $movie) {
+            $this->assertEquals(0, strlen($movie) % 2);
         }
+    }
 
-        try {
-            $response = [
-                'status' => 200, 
-                'data' => $this->handle($method)
-            ];
+    public function testReturnedValuesStartWithCharacterAndNameLengthEven()
+    {
+        $startWith = "W";
+        $result = $this->moviesRecomendation
+            ->filterByText($startWith)
+            ->filterParityNames(true)
+            ->getMovies();
+        foreach ($result as $movie) {
+            $this->assertStringStartsWith('W', $movie);
+            $this->assertEquals(0, strlen($movie) % 2);
+        }
+    }
 
-            return $response;
-        } catch (\Throwable $th) {
-            return [
-                'status' => 400,
-                'message' => $th->getMessage()
-            ];
+    // case 3: Zwracany są wszystkie tytuły, które składają się z więcej niż 1 słowa.
+    public function testReturnedValuesWordCountMoreThanOne()
+    {
+        $result = $this->moviesRecomendation
+            ->filterByMoreThanOneWord()
+            ->getMovies();
+        foreach($result as $movie) {
+            $this->assertStringContainsString(' ', $movie);
         }
     }
 }
