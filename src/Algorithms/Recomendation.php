@@ -6,7 +6,7 @@ class Recomendation {
     private array $items = [];
 
     public function __construct(array $items) {
-        $this->items = $items;
+        $this->items = array_unique($items);
     }
 
     public function getRandomItems(int $count): self
@@ -15,8 +15,7 @@ class Recomendation {
             $count = count($this->items);
         }
 
-        $keys = array_rand($this->items, $count);
-        $this->items = array_intersect_key($this->items, array_flip($keys));
+        $this->items = array_rand($this->items, $count);
         return $this;
     }
 
