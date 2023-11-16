@@ -1,0 +1,17 @@
+{
+    "name": "askspot/movies",
+    "description": "Simple app for movies recomendations",
+    "autoload": {
+        "psr-4": {
+            "Askspot\\Movies\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "martinpriest"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^10.4"
+    }
+}
