@@ -101,7 +101,7 @@ class GetMoviesTest extends TestCase {
     }
 
     // case 1: Zwracane są 3 losowe tytuły.
-    public function testFirstMethodReturnThreeRandomValues()
+    public function testRandomMethodWorksCorrect()
     {
         $method = RecomendationMethod::RANDOM;
         $result = $this->moviesAction->get($method);
@@ -109,7 +109,7 @@ class GetMoviesTest extends TestCase {
     }
 
     // case 2: Zwracane są wszystkie filmy na literę 'W' ale tylko jeśli mają parzystą liczbę znaków w tytule.
-    public function testSecondMethodStartsWithWAndEven()
+    public function testStartsWithWAndEvenMethodWorksCorrect()
     {
         $startWith = "W";
         $method = RecomendationMethod::STARTS_WITH_W_AND_EVEN;
@@ -121,7 +121,7 @@ class GetMoviesTest extends TestCase {
     }
 
     // case 3: Zwracany są wszystkie tytuły, które składają się z więcej niż 1 słowa.
-    public function testReturnedValuesWordCountMoreThanOne()
+    public function testMoreThanOneWordMethodWorksCorrect()
     {
         $method = RecomendationMethod::MORE_THAN_ONE_WORD;
         $result = $this->moviesAction->get($method);

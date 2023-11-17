@@ -7,7 +7,7 @@ class Recomendation {
     private array $modifiedItems = [];
 
     public function __construct(array $items) {
-        $this->originalItems = array_unique($items);
+        $this->originalItems = $items;
         $this->modifiedItems = array_unique($items);
     }
 
