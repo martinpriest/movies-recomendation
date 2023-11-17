@@ -99,56 +99,68 @@ class RecomendationTest extends TestCase {
         $this->moviesRecomendation = new Recomendation($this->testMovies);
     }
 
-    // case 1: Zwracane są 3 losowe tytuły.
-    public function testReturnedMoviesEqualCount()
+    public function testRecomendationHasNoDuplicates()
     {
-        $expectedCount = 3;
+        $result = $this->moviesRecomendation->getItems();
+        $this->assertCount(
+            count($result),
+            array_unique($result),
+        );
+    }
+    
+    public function testReturnedRandomMoviesEqualGivenCount()
+    {
+        $expectedCount = 5;
         $result = $this->moviesRecomendation
             ->getRandomItems($expectedCount)
             ->getItems();
         $this->assertCount($expectedCount, $result);
     }
 
-    // case 2: Zwracane są wszystkie filmy na literę 'W' ale tylko jeśli mają parzystą liczbę znaków w tytule.
+    public function testTooHighParamForRandomItemsShouldReturnFullArray()
+    {
+        $initialArrayLength = count(array_unique($this->testMovies));
+        $inputNumber = $initialArrayLength + 1;
+        $result = $this->moviesRecomendation
+            ->getRandomItems($inputNumber)
+            ->getItems();
+        $this->assertCount($initialArrayLength, $result);
+    }
     public function testReturnedValuesStartWithCharacter()
     {
-        $startWith = "W";
+        $startWith = "A";
         $result = $this->moviesRecomendation
             ->filterByText($startWith)
             ->getItems();
         foreach ($result as $movie) {
-            $this->assertStringStartsWith('W', $movie);
+            $this->assertStringStartsWith($startWith, $movie);
         }
     }
 
     public function testReturnedValuesAlwaysEven()
     {
         $result = $this->moviesRecomendation
-            ->filterParityNames(true)
+            ->filterParityNames()
             ->getItems();
         foreach($result as $movie) {
             $this->assertEquals(0, strlen($movie) % 2);
         }
     }
 
-    public function testReturnedValuesStartWithCharacterAndNameLengthEven()
+    public function testReturnedValuesAlwaysOdd()
     {
-        $startWith = "W";
         $result = $this->moviesRecomendation
-            ->filterByText($startWith)
-            ->filterParityNames(true)
+            ->filterParityNames(false)
             ->getItems();
-        foreach ($result as $movie) {
-            $this->assertStringStartsWith('W', $movie);
-            $this->assertEquals(0, strlen($movie) % 2);
+        foreach($result as $movie) {
+            $this->assertEquals(1, strlen($movie) % 2);
         }
     }
 
-    // case 3: Zwracany są wszystkie tytuły, które składają się z więcej niż 1 słowa.
     public function testReturnedValuesWordCountMoreThanOne()
     {
         $result = $this->moviesRecomendation
-            ->filterByMoreThanOneWord()
+            ->filterByMoreThanWordCount()
             ->getItems();
         foreach($result as $movie) {
             $this->assertStringContainsString(' ', $movie);
